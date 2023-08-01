@@ -73,7 +73,6 @@ watch([nameField, emailField, phoneNumber, message], () => {
   formState.email = emailField.value.trim()
   formState.phone = phoneNumber.value.trim()
   formState.message = message.value.trim()
-  
   localStorage.setItem('formState', JSON.stringify(formState))
 })
 
