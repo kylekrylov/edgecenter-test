@@ -5,7 +5,7 @@ import MazBtn from "maz-ui/components/MazBtn";
 import MazDialog from "maz-ui/components/MazDialog";
 import Form from "@/components//Molecules/Form.vue";
 
-const isOpen = ref(false)
+const isOpen = ref(true)
 </script>
 
 <template>
@@ -13,6 +13,7 @@ const isOpen = ref(false)
     <MazBtn @click="isOpen = true">
       Открыть форму
     </MazBtn>
+    
     
     <MazDialog
       scrollable
