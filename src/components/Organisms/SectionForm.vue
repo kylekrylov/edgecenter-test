@@ -13,8 +13,6 @@ const isOpen = ref(false)
     <MazBtn @click="isOpen = true">
       Открыть форму
     </MazBtn>
-    
-    
     <MazDialog
       scrollable
       max-height="95vh"

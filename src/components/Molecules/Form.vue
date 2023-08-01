@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import useVuelidate from "@vuelidate/core";
 import { helpers, minLength, maxLength, required, email } from "@vuelidate/validators";
 import applyPhoneNumberMask from "@/mixin/phoneNumberMask";
@@ -54,18 +54,30 @@ const v$ = useVuelidate(rules, {nameField, emailField, phoneNumber, message})
 
 const submitForm = () => {
   v$.value.$touch();
-  if (!v$.value.$invalid) console.log(v$.value)
-  
+  if (!v$.value.$invalid) console.table(formState)
+  alert("Форма типа отправлена, см в console")
+}
+onMounted(()=>{
+  if (localStorage.getItem('formState')) {
+    const savedFormState = JSON.parse(localStorage.getItem('formState'))
+    
+    nameField.value = savedFormState.name
+    emailField.value = savedFormState.email
+    phoneNumber.value = savedFormState.phone
+    message.value = savedFormState.message
+  }
+})
+
+watch([nameField, emailField, phoneNumber, message], () => {
   formState.name = nameField.value.trim()
   formState.email = emailField.value.trim()
   formState.phone = phoneNumber.value.trim()
   formState.message = message.value.trim()
   
-  console.table(formState)
-}
+  localStorage.setItem('formState', JSON.stringify(formState))
+})
 
 </script>
-
 
 <template>
   <form
