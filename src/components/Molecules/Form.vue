@@ -1,44 +1,33 @@
 <script setup>
-import { computed, reactive, ref } from "vue";
-import { useAutoAnimate } from '@formkit/auto-animate/vue'
+import { computed, ref } from "vue";
 import useVuelidate from "@vuelidate/core";
 import { helpers, minLength, maxLength, required, email } from "@vuelidate/validators";
 import applyPhoneNumberMask from "@/mixin/phoneNumberMask";
-import debounce from "@/mixin/debounce";
 
 import MazBtn from 'maz-ui/components/MazBtn'
 import MazInput from 'maz-ui/components/MazInput'
 import MazTextarea from 'maz-ui/components/MazTextarea'
 
+import { useAutoAnimate } from '@formkit/auto-animate/vue'
 const [form] = useAutoAnimate()
 
-const firstName = ref('')
-const lastName = ref('')
+const nameField = ref('')
 const phoneNumber = ref('')
 const emailField = ref('')
 const message = ref('')
 
 const formState = {
-  name: {
-    firstName: '',
-    lastName: '',
-  },
+  name: '',
   phone: '',
   email: '',
   message: '',
 }
 
 const rules = computed(() => ({
-  firstName: {
-    minLength: helpers.withMessage('Вот не похож(a) ты на азиата, минимум 3 символов', minLength(3)),
+  nameField: {
     maxLength: helpers.withMessage('Медленно убрал руки с клавиатуры, максимум 100 символов', maxLength(100)),
     alpha: helpers.withMessage('Поле должно содержать только буквы', alpha),
     required: helpers.withMessage('Обязательное для заполнения', required)
-  },
-  lastName: {
-    minLength: helpers.withMessage('Вот не похож ты на азиата, минимум 3 символов', minLength(3)),
-    maxLength: helpers.withMessage('Медленно убрал руки с клавиатуры, максимум 100 символов', maxLength(100)),
-    alpha: helpers.withMessage('Поле должно содержать только буквы', alpha),
   },
   phoneNumber: {
     minLength: helpers.withMessage('Мало цифр', minLength(18)),
@@ -59,19 +48,18 @@ const rules = computed(() => ({
 const phoneNumberMask = () => phoneNumber.value = applyPhoneNumberMask(phoneNumber.value)
 
 const mustBeRu = (value) => value.endsWith('.ru')
-const alpha = (value) => /^[a-zA-Zа-яА-ЯёЁ]+$/.test(value)
+const alpha = (value) => /^[a-zA-Zа-яА-ЯёЁ\s]+$/.test(value)
 
-const v$ = useVuelidate(rules, {firstName, message, phoneNumber, emailField}, {$lazy: true})
+const v$ = useVuelidate(rules, {nameField, emailField, phoneNumber, message})
 
 const submitForm = () => {
   v$.value.$touch();
   if (!v$.value.$invalid) console.log(v$.value)
   
-  formState.name.firstName = firstName.value
-  formState.name.lastName = lastName.value
-  formState.phone = phoneNumber.value
-  formState.email = emailField.value
-  formState.message = message.value
+  formState.name = nameField.value.trim()
+  formState.email = emailField.value.trim()
+  formState.phone = phoneNumber.value.trim()
+  formState.message = message.value.trim()
   
   console.table(formState)
 }
@@ -86,29 +74,15 @@ const submitForm = () => {
   >
     <div class="form__name">
       <MazInput
-        v-model="v$.firstName.$model"
+        v-model="v$.nameField.$model"
         label="Имя"
-        :error="v$.firstName.$error"
+        :error="v$.nameField.$error"
         required
         debounce
         auto-focus
       />
       <div
-        v-for="error in  v$.firstName.$errors"
-        :key="error.$uid"
-        class="maz-text-warning-600 text-xs"
-      >
-        {{ error.$message }}
-      </div>
-    </div>
-    <div class="form__name">
-      <MazInput
-        v-model="v$.lastName.$model"
-        label="Фамилия"
-        :error="v$.lastName.$error"
-      />
-      <div
-        v-for="error in  v$.firstName.$errors"
+        v-for="error in  v$.nameField.$errors"
         :key="error.$uid"
         class="maz-text-warning-600 text-xs"
       >
