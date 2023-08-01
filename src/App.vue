@@ -1,7 +1,6 @@
 <script setup>
 import TheHeader from "@/components/TheHeader.vue";
 import SectionForm from "@/components/Organisms/SectionForm.vue";
-import SectionUserList from "@/components/Organisms/SectionUserList.vue";
 
 </script>
 
@@ -9,7 +8,6 @@ import SectionUserList from "@/components/Organisms/SectionUserList.vue";
   <TheHeader/>
   <main class="main">
     <SectionForm/>
-<!--    <SectionUserList/>-->
   </main>
   <footer/>
 </template>
