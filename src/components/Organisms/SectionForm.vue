@@ -5,7 +5,7 @@ import MazBtn from "maz-ui/components/MazBtn";
 import MazDialog from "maz-ui/components/MazDialog";
 import Form from "@/components//Molecules/Form.vue";
 
-const isOpen = ref(true)
+const isOpen = ref(false)
 </script>
 
 <template>

@@ -75,7 +75,7 @@ const submitForm = () => {
     <div class="form__name">
       <MazInput
         v-model="v$.nameField.$model"
-        label="Имя"
+        label="ФОИ"
         :error="v$.nameField.$error"
         required
         debounce
