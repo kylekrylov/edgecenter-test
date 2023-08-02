@@ -9,15 +9,18 @@ import MazInput from 'maz-ui/components/MazInput'
 import MazTextarea from 'maz-ui/components/MazTextarea'
 
 import { useAutoAnimate } from '@formkit/auto-animate/vue'
+
 const [form] = useAutoAnimate()
 
 const nameField = ref('')
+const familyNameField = ref('')
 const phoneNumber = ref('')
 const emailField = ref('')
 const message = ref('')
 
 const formState = {
   name: '',
+  familyName: '',
   phone: '',
   email: '',
   message: '',
@@ -28,6 +31,10 @@ const rules = computed(() => ({
     maxLength: helpers.withMessage('Медленно убрал руки с клавиатуры, максимум 100 символов', maxLength(100)),
     alpha: helpers.withMessage('Поле должно содержать только буквы', alpha),
     required: helpers.withMessage('Обязательное для заполнения', required)
+  },
+  familyNameField: {
+    maxLength: helpers.withMessage('Медленно убрал руки с клавиатуры, максимум 100 символов', maxLength(100)),
+    alpha: helpers.withMessage('Поле должно содержать только буквы', alpha)
   },
   phoneNumber: {
     minLength: helpers.withMessage('Мало цифр', minLength(18)),
@@ -50,29 +57,33 @@ const phoneNumberMask = () => phoneNumber.value = applyPhoneNumberMask(phoneNumb
 const mustBeRu = (value) => value.endsWith('.ru')
 const alpha = (value) => /^[a-zA-Zа-яА-ЯёЁ\s]+$/.test(value)
 
-const v$ = useVuelidate(rules, {nameField, emailField, phoneNumber, message})
+const v$ = useVuelidate(rules, {nameField, familyNameField, emailField, phoneNumber, message})
 
 const submitForm = () => {
   v$.value.$touch();
   if (!v$.value.$invalid) console.table(formState)
   alert("Форма типа отправлена, см в console")
 }
-onMounted(()=>{
+
+onMounted(() => {
   if (localStorage.getItem('formState')) {
     const savedFormState = JSON.parse(localStorage.getItem('formState'))
     
     nameField.value = savedFormState.name
+    familyNameField.value = savedFormState.familyName
     emailField.value = savedFormState.email
     phoneNumber.value = savedFormState.phone
     message.value = savedFormState.message
   }
 })
 
-watch([nameField, emailField, phoneNumber, message], () => {
+watch([nameField, familyNameField, emailField, phoneNumber, message], () => {
   formState.name = nameField.value.trim()
+  formState.familyName = familyNameField.value.trim()
   formState.email = emailField.value.trim()
   formState.phone = phoneNumber.value.trim()
   formState.message = message.value.trim()
+  
   localStorage.setItem('formState', JSON.stringify(formState))
 })
 
@@ -86,14 +97,28 @@ watch([nameField, emailField, phoneNumber, message], () => {
     <div class="form__name">
       <MazInput
         v-model="v$.nameField.$model"
-        label="ФОИ"
+        label="Имя"
         :error="v$.nameField.$error"
         required
         debounce
         auto-focus
       />
       <div
-        v-for="error in  v$.nameField.$errors"
+        v-for="error in v$.nameField.$errors"
+        :key="error.$uid"
+        class="maz-text-warning-600 text-xs"
+      >
+        {{ error.$message }}
+      </div>
+    </div>
+    <div class="form__name">
+      <MazInput
+        v-model="v$.familyNameField.$model"
+        label="Фамилия"
+        :error="v$.familyNameField.$error"
+      />
+      <div
+        v-for="error in v$.familyNameField.$errors"
         :key="error.$uid"
         class="maz-text-warning-600 text-xs"
       >
