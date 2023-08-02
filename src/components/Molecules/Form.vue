@@ -55,14 +55,22 @@ const rules = computed(() => ({
 const phoneNumberMask = () => phoneNumber.value = applyPhoneNumberMask(phoneNumber.value)
 
 const mustBeRu = (value) => value.endsWith('.ru')
-const alpha = (value) => /^[a-zA-Zа-яА-ЯёЁ\s]+$/.test(value)
+
+const alpha = (value) => {
+  return (!value || value.trim() === '')
+    ? true
+    : /^[a-zA-Zа-яА-ЯёЁ\s]+$/.test(value)
+};
 
 const v$ = useVuelidate(rules, {nameField, familyNameField, emailField, phoneNumber, message})
 
 const submitForm = () => {
   v$.value.$touch();
-  if (!v$.value.$invalid) console.table(formState)
-  alert("Форма типа отправлена, см в console")
+  
+  return v$.value.$invalid
+    ? alert("чет не то...")
+    : (console.table(formState),
+      alert("Форма типа отправлена, см в console"))
 }
 
 onMounted(() => {
