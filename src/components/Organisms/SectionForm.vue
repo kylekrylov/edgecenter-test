@@ -6,11 +6,20 @@ import MazDialog from "maz-ui/components/MazDialog";
 import Form from "@/components//Molecules/Form.vue";
 
 const isOpen = ref(false)
+
+function handleCloseForm() {
+  isOpen.value = false;
+};
+
+const handleFormOpen = ()=> {
+  isOpen.value = true
+}
+
 </script>
 
 <template>
   <section class="container">
-    <MazBtn @click="isOpen = true">
+    <MazBtn @click="handleFormOpen()">
       Открыть форму
     </MazBtn>
     <MazDialog
@@ -19,7 +28,7 @@ const isOpen = ref(false)
       v-model="isOpen"
       title="Title"
     >
-      <Form/>
+      <Form @closeForm="handleCloseForm()"/>
     </MazDialog>
   </section>
 </template>

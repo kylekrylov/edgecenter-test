@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onMounted, ref, watch } from "vue";
+import { computed, onMounted, ref, watch, defineEmits} from "vue";
 import useVuelidate from "@vuelidate/core";
 import { helpers, minLength, maxLength, required, email } from "@vuelidate/validators";
 import applyPhoneNumberMask from "@/mixin/phoneNumberMask";
@@ -17,6 +17,8 @@ const familyNameField = ref('')
 const phoneNumber = ref('')
 const emailField = ref('')
 const message = ref('')
+
+const emit = defineEmits(['closeForm']);
 
 const formState = {
   name: '',
@@ -55,6 +57,13 @@ const rules = computed(() => ({
 const phoneNumberMask = () => phoneNumber.value = applyPhoneNumberMask(phoneNumber.value)
 
 const mustBeRu = (value) => value.endsWith('.ru')
+const resetForm = () => {
+  nameField.value = ''
+  familyNameField.value = ''
+  emailField.value = ''
+  phoneNumber.value = ''
+  message.value = ''
+}
 
 const alpha = (value) => {
   return (!value || value.trim() === '')
@@ -64,13 +73,22 @@ const alpha = (value) => {
 
 const v$ = useVuelidate(rules, {nameField, familyNameField, emailField, phoneNumber, message})
 
+const handleCloseForm = () => {
+  isOpen.value = false;
+};
+
 const submitForm = () => {
   v$.value.$touch();
   
-  return v$.value.$invalid
-    ? alert("чет не то...")
-    : (console.table(formState),
-      alert("Форма типа отправлена, см в console"))
+  if (v$.value.$invalid) {
+    alert("чет не то...");
+  } else {
+    console.table(formState);
+    resetForm();
+    alert("Форма типа отправлена, см в console");
+    
+    emit("closeForm");
+  }
 }
 
 onMounted(() => {
